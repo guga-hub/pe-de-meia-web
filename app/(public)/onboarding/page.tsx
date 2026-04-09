@@ -44,7 +44,7 @@ export default function OnboardingPage() {
             animate={{ opacity: 1 }}
             className="text-3xl font-bold text-white mb-4 text-center"
           >
-            {steps[step].title}
+            {steps[step]?.title || 'Carregando...'}
           </motion.h2>
 
           <motion.p
@@ -53,7 +53,7 @@ export default function OnboardingPage() {
             animate={{ opacity: 1 }}
             className="text-slate-400 text-center mb-8"
           >
-            {steps[step].description}
+            {steps[step]?.description || ''}
           </motion.p>
 
           {step === 1 && (

@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 import { useOnboardingStore } from '@/lib/store/onboardingStore'
@@ -30,7 +31,7 @@ export function useStartOnboarding() {
 export function useOnboardingSession(sessionToken: string | null) {
   const { setGuide, setError } = useOnboardingStore()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ['onboarding', sessionToken],
     queryFn: async () => {
       if (!sessionToken) return null
@@ -40,13 +41,19 @@ export function useOnboardingSession(sessionToken: string | null) {
       return response.data
     },
     enabled: !!sessionToken,
-    onSuccess: (data) => {
-      if (data?.guide) {
-        setGuide(data.guide)
-      }
-    },
-    onError: (error: Error) => {
-      setError(error.message)
-    },
   })
+
+  React.useEffect(() => {
+    if (query.data?.guide) {
+      setGuide(query.data.guide)
+    }
+  }, [query.data?.guide, setGuide])
+
+  React.useEffect(() => {
+    if (query.error) {
+      setError((query.error as Error).message)
+    }
+  }, [query.error, setError])
+
+  return query
 }
